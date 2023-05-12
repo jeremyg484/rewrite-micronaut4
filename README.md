@@ -34,7 +34,7 @@ In a Maven project's pom.xml, make your recipe module a plugin dependency:
                 <version>4.38.0</version>
                 <configuration>
                     <activeRecipes>
-                        <recipe>com.yourorg.NoGuavaListsNewArrayList</recipe>
+                        <recipe>org.micronaut.rewrite.NoGuavaListsNewArrayList</recipe>
                     </activeRecipes>
                 </configuration>
                 <dependencies>
@@ -69,7 +69,7 @@ dependencies {
 }
 
 rewrite {
-    activeRecipe("com.yourorg.NoGuavaListsNewArrayList")
+    activeRecipe("org.micronaut.rewrite.NoGuavaListsNewArrayList")
 }
 ```
 

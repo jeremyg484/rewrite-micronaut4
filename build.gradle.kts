@@ -30,8 +30,8 @@ java {
 }
 
 // Set as appropriate for your organization
-group = "com.yourorg"
-description = "Rewrite recipes."
+group = "org.micronaut.rewrite"
+description = "Rewrite recipes for upgrading to Micronaut 4."
 
 repositories {
     mavenLocal()
@@ -60,6 +60,8 @@ dependencies {
 
     implementation("org.openrewrite:rewrite-java")
     runtimeOnly("org.openrewrite:rewrite-java-17")
+    implementation("org.openrewrite:rewrite-maven")
+    implementation("org.openrewrite:rewrite-properties")
     // Need to have a slf4j binding to see any output enabled from the parser.
     runtimeOnly("ch.qos.logback:logback-classic:1.2.+")
 
@@ -86,9 +88,9 @@ tasks.named<JavaCompile>("compileJava") {
 }
 
 configure<ContactsExtension> {
-    val j = Contact("team@moderne.io")
-    j.moniker("Team Moderne")
-    people["team@moderne.io"] = j
+    val j = Contact("grellej@unityfoundation.org")
+    j.moniker("Jeremy Grelle")
+    people["grellej@unityfoundation.org"] = j
 }
 
 configure<PublishingExtension> {
