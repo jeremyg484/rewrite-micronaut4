@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.micronaut.rewrite;
+package io.micronaut.rewrite;
 
 import org.openrewrite.ExecutionContext;
 import org.openrewrite.maven.MavenDownloadingException;

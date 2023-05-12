@@ -16,5 +16,5 @@
 ---
 type: specs.openrewrite.org/v1beta/category
 name: Micronaut
-packageName: org.micronaut.rewrite
+packageName: io.micronaut.rewrite
 description: Recipes for upgrading and patching [Micronaut](https://micronaut.io/) applications.

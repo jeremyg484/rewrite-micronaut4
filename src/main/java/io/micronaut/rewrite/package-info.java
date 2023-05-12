@@ -15,7 +15,7 @@
  */
 @NonNullApi
 @NonNullFields
-package org.micronaut.rewrite;
+package io.micronaut.rewrite;
 
 import org.openrewrite.internal.lang.NonNullApi;
 import org.openrewrite.internal.lang.NonNullFields;

@@ -15,10 +15,22 @@
 #
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: org.micronaut.rewrite.Micronaut3to4Migration
+name: io.micronaut.rewrite.Micronaut3to4Migration
 displayName: Migrate from Micronaut 3.x to 4.x
 description: This recipe will apply changes required for migrating from Micronaut 3 to Micronaut 4.
 recipeList:
+  - org.openrewrite.java.migrate.UpgradeToJava17
+  - org.openrewrite.gradle.ChangeJavaCompatibility:
+      newVersion: 17
+      compatibilityType: source
+  - org.openrewrite.gradle.ChangeJavaCompatibility:
+      newVersion: 17
+      compatibilityType: target
+  - org.openrewrite.gradle.AddDependency:
+      groupId: org.yaml
+      artifactId: snakeyaml
+      onlyIfUsing: io.micronaut.runtime.Micronaut
+      configuration: runtimeOnly
   - org.openrewrite.maven.UpgradeParentVersion:
       groupId: io.micronaut
       artifactId: micronaut-parent
@@ -28,12 +40,12 @@ recipeList:
       artifactId: micronaut-bom
       newVersion: 4.0.0-M2
       overrideManagedVersion: true
-  - org.micronaut.rewrite.UpgradeMicronautMavenPropertyVersion:
+  - io.micronaut.rewrite.UpgradeMicronautMavenPropertyVersion:
       newVersion: 4.0.0-M2
   - org.openrewrite.gradle.UpdateGradleWrapper:
       version: 8.x
       distribution: null
-  - org.micronaut.rewrite.UpgradeMicronautGradlePropertiesVersion:
+  - io.micronaut.rewrite.UpgradeMicronautGradlePropertiesVersion:
       newVersion: 4.0.0-M2
   - org.openrewrite.gradle.plugins.UpgradePluginVersion:
       pluginIdPattern: io.micronaut.application

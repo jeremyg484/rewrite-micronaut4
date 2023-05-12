@@ -30,8 +30,9 @@ java {
 }
 
 // Set as appropriate for your organization
-group = "org.micronaut.rewrite"
+group = "io.micronaut.rewrite"
 description = "Rewrite recipes for upgrading to Micronaut 4."
+version = "0.1.0-SNAPSHOT"
 
 repositories {
     mavenLocal()
@@ -60,7 +61,9 @@ dependencies {
 
     implementation("org.openrewrite:rewrite-java")
     runtimeOnly("org.openrewrite:rewrite-java-17")
+    implementation("org.openrewrite.recipe:rewrite-migrate-java")
     implementation("org.openrewrite:rewrite-maven")
+    implementation("org.openrewrite:rewrite-gradle")
     implementation("org.openrewrite:rewrite-properties")
     // Need to have a slf4j binding to see any output enabled from the parser.
     runtimeOnly("ch.qos.logback:logback-classic:1.2.+")
