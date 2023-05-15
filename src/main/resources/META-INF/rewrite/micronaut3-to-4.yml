@@ -53,3 +53,27 @@ recipeList:
   - org.openrewrite.gradle.plugins.UpgradePluginVersion:
       pluginIdPattern: com.github.johnrengelman.shadow
       newVersion: 8.x
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.validation.constraints.NotNull
+      newFullyQualifiedTypeName: jakarta.validation.constraints.NotNull
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.validation.constraints.Pattern
+      newFullyQualifiedTypeName: jakarta.validation.constraints.Pattern
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.persistence.GenerationType
+      newFullyQualifiedTypeName: jakarta.persistence.GenerationType
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.persistence.Column
+      newFullyQualifiedTypeName: jakarta.persistence.Column
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.persistence.Convert
+      newFullyQualifiedTypeName: jakarta.persistence.Convert
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.persistence.Entity
+      newFullyQualifiedTypeName: jakarta.persistence.Entity
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.persistence.GeneratedValue
+      newFullyQualifiedTypeName: jakarta.persistence.GeneratedValue
+  - org.openrewrite.java.ChangeType:
+      oldFullyQualifiedTypeName: javax.persistence.Id
+      newFullyQualifiedTypeName: jakarta.persistence.Id
