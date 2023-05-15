@@ -31,6 +31,11 @@ recipeList:
       artifactId: snakeyaml
       onlyIfUsing: io.micronaut.runtime.Micronaut
       configuration: runtimeOnly
+  - org.openrewrite.gradle.AddDependency:
+      groupId: jakarta.validation
+      artifactId: jakarta.validation-api
+      onlyIfUsing: jakarta.validation.constraints.*
+      configuration: implementation
   - org.openrewrite.maven.UpgradeParentVersion:
       groupId: io.micronaut
       artifactId: micronaut-parent
