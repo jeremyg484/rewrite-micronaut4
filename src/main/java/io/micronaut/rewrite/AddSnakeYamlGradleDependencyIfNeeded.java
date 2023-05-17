@@ -25,9 +25,13 @@ public class AddSnakeYamlGradleDependencyIfNeeded extends Recipe {
 	@Nullable
 	protected TreeVisitor<?, ExecutionContext> getApplicableTest() {
 		return Applicability.or(new HasSourcePath<>("**/application.yml"),
+				new HasSourcePath<>("**/application.yaml"),
 				new HasSourcePath<>("**/application-*.yml"),
+				new HasSourcePath<>("**/application-*.yaml"),
 				new HasSourcePath<>("**/bootstrap.yml"),
-				new HasSourcePath<>("**/bootstrap-*.yml"));
+				new HasSourcePath<>("**/bootstrap.yaml"),
+				new HasSourcePath<>("**/bootstrap-*.yml"),
+				new HasSourcePath<>("**/bootstrap-*.yaml"));
 	}
 
 	@Override

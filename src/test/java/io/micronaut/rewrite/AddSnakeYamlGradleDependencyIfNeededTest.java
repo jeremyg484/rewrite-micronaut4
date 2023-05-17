@@ -48,6 +48,25 @@ public class AddSnakeYamlGradleDependencyIfNeededTest implements RewriteTest {
 	}
 
 	@Test
+	void testAddDependencyForApplicationYaml() {
+		rewriteRun(mavenProject("project",
+				srcMainJava(java(micronautApplication)),
+				srcMainResources(yaml("""
+					micronaut:
+					   application:
+					     name: testApp				
+				""", s -> s.path("application.yaml"))),
+				buildGradle("",
+						"""
+								dependencies {
+								    runtimeOnly "org.yaml:snakeyaml"
+								}
+							"""
+				)
+		));
+	}
+
+	@Test
 	void testNoDependencyForMissingApplicationYml() {
 		rewriteRun(mavenProject("project",
 				srcMainJava(java(micronautApplication)),
