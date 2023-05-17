@@ -64,6 +64,7 @@ dependencies {
     implementation("org.openrewrite.recipe:rewrite-migrate-java")
     implementation("org.openrewrite:rewrite-maven")
     implementation("org.openrewrite:rewrite-gradle")
+    implementation("org.openrewrite:rewrite-yaml")
     implementation("org.openrewrite:rewrite-properties")
     // Need to have a slf4j binding to see any output enabled from the parser.
     runtimeOnly("ch.qos.logback:logback-classic:1.2.+")
@@ -72,6 +73,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:latest.release")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:latest.release")
     testRuntimeOnly("com.google.guava:guava:latest.release")
+    testRuntimeOnly("org.codehaus.groovy:groovy:latest.release")
+    testRuntimeOnly("io.micronaut:micronaut-context:4.0.0-M2")
 
     testImplementation("org.openrewrite:rewrite-test")
     testImplementation("org.assertj:assertj-core:latest.release")

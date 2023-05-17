@@ -20,24 +20,20 @@ displayName: Migrate from Micronaut 3.x to 4.x
 description: This recipe will apply changes required for migrating from Micronaut 3 to Micronaut 4.
 recipeList:
   - org.openrewrite.java.migrate.UpgradeToJava17
-  - org.openrewrite.gradle.ChangeJavaCompatibility:
-      newVersion: 17
+  - org.openrewrite.gradle.UpdateJavaCompatibility:
+      version: 17
       compatibilityType: source
-  - org.openrewrite.gradle.ChangeJavaCompatibility:
-      newVersion: 17
+  - org.openrewrite.gradle.UpdateJavaCompatibility:
+      version: 17
       compatibilityType: target
-  - org.openrewrite.gradle.AddDependency:
-      groupId: org.yaml
-      artifactId: snakeyaml
-      onlyIfUsing: io.micronaut.runtime.Micronaut
-      configuration: runtimeOnly
+  - io.micronaut.rewrite.AddSnakeYamlGradleDependencyIfNeeded
   - org.openrewrite.gradle.AddDependency:
       groupId: jakarta.validation
       artifactId: jakarta.validation-api
       onlyIfUsing: jakarta.validation.constraints.*
       configuration: implementation
   - org.openrewrite.maven.UpgradeParentVersion:
-      groupId: io.micronaut
+      groupId: io.micronaut.platform
       artifactId: micronaut-parent
       newVersion: 4.0.0-M2
   - org.openrewrite.maven.UpgradeDependencyVersion:
