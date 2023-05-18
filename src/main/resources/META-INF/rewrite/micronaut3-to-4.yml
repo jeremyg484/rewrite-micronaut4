@@ -19,6 +19,7 @@ name: io.micronaut.rewrite.Micronaut3to4Migration
 displayName: Migrate from Micronaut 3.x to 4.x
 description: This recipe will apply changes required for migrating from Micronaut 3 to Micronaut 4.
 recipeList:
+  # Update baseline to Java 17
   - org.openrewrite.java.migrate.UpgradeToJava17
   - org.openrewrite.gradle.UpdateJavaCompatibility:
       version: 17
@@ -26,55 +27,93 @@ recipeList:
   - org.openrewrite.gradle.UpdateJavaCompatibility:
       version: 17
       compatibilityType: target
-  - io.micronaut.rewrite.AddSnakeYamlGradleDependencyIfNeeded
-  - org.openrewrite.gradle.AddDependency:
-      groupId: jakarta.validation
-      artifactId: jakarta.validation-api
-      onlyIfUsing: jakarta.validation.constraints.*
-      configuration: implementation
-  - org.openrewrite.maven.UpgradeParentVersion:
-      groupId: io.micronaut.platform
-      artifactId: micronaut-parent
-      newVersion: 4.0.0-M2
-  - org.openrewrite.maven.UpgradeDependencyVersion:
-      groupId: io.micronaut
-      artifactId: micronaut-bom
-      newVersion: 4.0.0-M2
-      overrideManagedVersion: true
+
+  # Update the Micronaut version
   - io.micronaut.rewrite.UpgradeMicronautMavenPropertyVersion:
       newVersion: 4.0.0-M2
+  - io.micronaut.rewrite.UpgradeMicronautGradlePropertiesVersion:
+      newVersion: 4.0.0-M2
+
+  # Update Gradle build to Gradle 8.x
   - org.openrewrite.gradle.UpdateGradleWrapper:
       version: 8.x
-      distribution: null
-  - io.micronaut.rewrite.UpgradeMicronautGradlePropertiesVersion:
+
+  # Update Gradle plugins
+  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
+      pluginIdPattern: com.github.johnrengelman.shadow
+      newVersion: 8.x
+  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
+      pluginIdPattern: io.micronaut.aot
       newVersion: 4.0.0-M2
   - org.openrewrite.gradle.plugins.UpgradePluginVersion:
       pluginIdPattern: io.micronaut.application
       newVersion: 4.0.0-M2
   - org.openrewrite.gradle.plugins.UpgradePluginVersion:
-      pluginIdPattern: com.github.johnrengelman.shadow
-      newVersion: 8.x
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: javax.validation.constraints.NotNull
-      newFullyQualifiedTypeName: jakarta.validation.constraints.NotNull
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: javax.validation.constraints.Pattern
-      newFullyQualifiedTypeName: jakarta.validation.constraints.Pattern
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: javax.persistence.GenerationType
-      newFullyQualifiedTypeName: jakarta.persistence.GenerationType
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: javax.persistence.Column
-      newFullyQualifiedTypeName: jakarta.persistence.Column
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: javax.persistence.Convert
-      newFullyQualifiedTypeName: jakarta.persistence.Convert
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: javax.persistence.Entity
-      newFullyQualifiedTypeName: jakarta.persistence.Entity
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: javax.persistence.GeneratedValue
-      newFullyQualifiedTypeName: jakarta.persistence.GeneratedValue
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName: javax.persistence.Id
-      newFullyQualifiedTypeName: jakarta.persistence.Id
+      pluginIdPattern: io.micronaut.component
+      newVersion: 4.0.0-M2
+  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
+      pluginIdPattern: io.micronaut.crac
+      newVersion: 4.0.0-M2
+  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
+      pluginIdPattern: io.micronaut.docker
+      newVersion: 4.0.0-M2
+  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
+      pluginIdPattern: io.micronaut.graalvm
+      newVersion: 4.0.0-M2
+  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
+      pluginIdPattern: io.micronaut.library
+      newVersion: 4.0.0-M2
+  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
+      pluginIdPattern: io.micronaut.minimal.application
+      newVersion: 4.0.0-M2
+  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
+      pluginIdPattern: io.micronaut.minimal.library
+      newVersion: 4.0.0-M2
+  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
+      pluginIdPattern: io.micronaut.platform.catalog
+      newVersion: 4.0.0-M2
+  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
+      pluginIdPattern: io.micronaut.test-resources
+      newVersion: 4.0.0-M2
+  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
+      pluginIdPattern: io.micronaut.test-resources-consumer
+      newVersion: 4.0.0-M2
+
+  # Add the snakeyaml dependency if using yaml for Micronaut application configuration
+  - io.micronaut.rewrite.AddSnakeYamlGradleDependencyIfNeeded
+
+  # Remove jakarta annotations dependency as it is a transitive dependency of micronaut-inject, and migrate from javax.annotation if needed
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.annotation
+      newPackageName: jakarta.annotation
+      recursive: true
+  - org.openrewrite.gradle.RemoveGradleDependency:
+      configuration: implementation
+      groupId: jakarta.annotation
+      artifactId: jakarta.annotation-api
+
+  # Add jakarta validation dependency if needed, migrate from javax.validation if needed, and update micronaut validation dependencies
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.validation
+      newPackageName: jakarta.validation
+      recursive: true
+  - org.openrewrite.gradle.AddDependency:
+      groupId: jakarta.validation
+      artifactId: jakarta.validation-api
+      onlyIfUsing: jakarta.validation..*
+      configuration: implementation
+  - org.openrewrite.gradle.ChangeDependencyGroupId:
+      groupId: io.micronaut
+      artifactId: micronaut-validation
+      newGroupId: io.micronaut.validation
+      configuration: implementation
+  - org.openrewrite.gradle.ChangeDependencyGroupId:
+      groupId: io.micronaut
+      artifactId: micronaut-validation
+      newGroupId: io.micronaut.validation
+      configuration: annotationProcessor
+  - org.openrewrite.gradle.ChangeDependencyArtifactId:
+      groupId: io.micronaut
+      artifactId: micronaut-validation
+      newArtifactId: micronaut-validation-processor
+      configuration: annotationProcessor
