@@ -182,7 +182,7 @@ recipeList:
       recursive: true
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: io.micronaut.rewrite.UpdateMicronautWebsocket
+name: io.micronaut.rewrite.AddMicronautWebsocketDependencyIfNeeded
 displayName: Update the Micronaut Websocket support
 description: This recipe will add the explicit Micronaut Websocket dependency if needed
 recipeList:
@@ -215,6 +215,23 @@ recipeList:
       newVersion: LATEST
 ---
 type: specs.openrewrite.org/v1beta/recipe
+name: io.micronaut.rewrite.AddMicronautRetryDependencyIfNeeded
+displayName: Update the Micronaut Retry support
+description: This recipe will add the explicit Micronaut Retry dependency if needed
+recipeList:
+  - org.openrewrite.gradle.AddDependency:
+      groupId: io.micronaut
+      artifactId: micronaut-retry
+      configuration: implementation
+      onlyIfUsing: io.micronaut.retry.annotation.*
+  - org.openrewrite.maven.AddDependency:
+      groupId: io.micronaut
+      artifactId: micronaut-retry
+      version: LATEST
+      scope: compile
+      onlyIfUsing: io.micronaut.retry.annotation.*
+---
+type: specs.openrewrite.org/v1beta/recipe
 name: io.micronaut.rewrite.Micronaut3to4Migration
 displayName: Migrate from Micronaut 3.x to 4.x
 description: This recipe will apply changes required for migrating from Micronaut 3 to Micronaut 4.
@@ -230,5 +247,6 @@ recipeList:
   - io.micronaut.rewrite.UpdateJakartaPersistence
   - io.micronaut.rewrite.UpdateMicronautValidation
   - io.micronaut.rewrite.UpdateMicronautEmail
-  - io.micronaut.rewrite.UpdateMicronautWebsocket
+  - io.micronaut.rewrite.AddMicronautWebsocketDependencyIfNeeded
   - io.micronaut.rewrite.UpdateMicronautSession
+  - io.micronaut.rewrite.AddMicronautRetryDependencyIfNeeded

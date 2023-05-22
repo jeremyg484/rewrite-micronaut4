@@ -10,12 +10,12 @@ import static org.openrewrite.gradle.Assertions.buildGradle;
 import static org.openrewrite.java.Assertions.*;
 import static org.openrewrite.maven.Assertions.pomXml;
 
-public class UpdateMicronautWebsocketTest implements RewriteTest {
+public class AddMicronautWebsocketDependencyIfNeededTest implements RewriteTest {
 
     @Override
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion().classpath("micronaut-websocket"));
-        spec.recipeFromResource("/META-INF/rewrite/micronaut3-to-4.yml", "io.micronaut.rewrite.UpdateMicronautWebsocket");
+        spec.recipeFromResource("/META-INF/rewrite/micronaut3-to-4.yml", "io.micronaut.rewrite.AddMicronautWebsocketDependencyIfNeeded");
     }
 
     @Language("java")

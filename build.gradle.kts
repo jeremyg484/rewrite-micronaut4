@@ -77,6 +77,7 @@ dependencies {
     testRuntimeOnly("io.micronaut:micronaut-context:4.0.0-M2")
     testRuntimeOnly("io.micronaut:micronaut-websocket:4.0.0-M2")
     testRuntimeOnly("io.micronaut.validation:micronaut-validation:4.0.0-M5")
+    testRuntimeOnly("io.micronaut:micronaut-retry:4.0.0-M4")
     testRuntimeOnly("io.micronaut.email:micronaut-email:2.0.0-M1")
     testRuntimeOnly("javax.annotation:javax.annotation-api:1.3.2")
     testRuntimeOnly("javax.validation:validation-api:2.0.1.Final")
