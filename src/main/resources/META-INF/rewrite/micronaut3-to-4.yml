@@ -15,30 +15,34 @@
 #
 ---
 type: specs.openrewrite.org/v1beta/recipe
-name: io.micronaut.rewrite.Micronaut3to4Migration
-displayName: Migrate from Micronaut 3.x to 4.x
-description: This recipe will apply changes required for migrating from Micronaut 3 to Micronaut 4.
+name: io.micronaut.rewrite.UpdateBuildToJava17
+displayName: Update the Gradle or Maven build to a Java 17 baseline
+description: This recipe will update the Java version to 17 for a Gradle or Maven build.
 recipeList:
-  # Update baseline to Java 17
-  - org.openrewrite.java.migrate.UpgradeToJava17
   - org.openrewrite.gradle.UpdateJavaCompatibility:
       version: 17
-      compatibilityType: source
-  - org.openrewrite.gradle.UpdateJavaCompatibility:
-      version: 17
-      compatibilityType: target
-
-  # Update the Micronaut version
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: jdk.version
+      newValue: 17
+  - org.openrewrite.maven.ChangePropertyValue:
+      key: release.version
+      newValue: 17
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.micronaut.rewrite.UpdateBuildToMicronaut4Version
+displayName: Update the Micronaut version to 4.x
+description: This recipe will update the Micronaut version to 4.x for a Gradle or Maven build.
+recipeList:
   - io.micronaut.rewrite.UpgradeMicronautMavenPropertyVersion:
       newVersion: 4.0.0-M2
   - io.micronaut.rewrite.UpgradeMicronautGradlePropertiesVersion:
       newVersion: 4.0.0-M2
-
-  # Update Gradle build to Gradle 8.x
-  - org.openrewrite.gradle.UpdateGradleWrapper:
-      version: 8.x
-
-  # Update Gradle plugins
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.micronaut.rewrite.UpdateBuildPlugins
+displayName: Add Micronaut build plugins to 4.x
+description: This recipe will update the shadow jar plugin to 8.x and the Micronaut build plugins to 4.x for a Gradle build.
+recipeList:
   - org.openrewrite.gradle.plugins.UpgradePluginVersion:
       pluginIdPattern: com.github.johnrengelman.shadow
       newVersion: 8.x
@@ -47,9 +51,6 @@ recipeList:
       newVersion: 4.0.0-M2
   - org.openrewrite.gradle.plugins.UpgradePluginVersion:
       pluginIdPattern: io.micronaut.application
-      newVersion: 4.0.0-M2
-  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
-      pluginIdPattern: io.micronaut.component
       newVersion: 4.0.0-M2
   - org.openrewrite.gradle.plugins.UpgradePluginVersion:
       pluginIdPattern: io.micronaut.crac
@@ -70,38 +71,81 @@ recipeList:
       pluginIdPattern: io.micronaut.minimal.library
       newVersion: 4.0.0-M2
   - org.openrewrite.gradle.plugins.UpgradePluginVersion:
-      pluginIdPattern: io.micronaut.platform.catalog
-      newVersion: 4.0.0-M2
-  - org.openrewrite.gradle.plugins.UpgradePluginVersion:
       pluginIdPattern: io.micronaut.test-resources
       newVersion: 4.0.0-M2
   - org.openrewrite.gradle.plugins.UpgradePluginVersion:
       pluginIdPattern: io.micronaut.test-resources-consumer
       newVersion: 4.0.0-M2
-
-  # Add the snakeyaml dependency if using yaml for Micronaut application configuration
-  - io.micronaut.rewrite.AddSnakeYamlGradleDependencyIfNeeded
-
-  # Remove jakarta annotations dependency as it is a transitive dependency of micronaut-inject, and migrate from javax.annotation if needed
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.micronaut.rewrite.UpdateMicronautPlatformBom
+displayName: Update to Micronaut 4.x platform BOM
+description: This recipe will update a Gradle or Maven build to reference the Micronaut 4 platform BOM.
+recipeList:
+  - org.openrewrite.maven.ChangeParentPom:
+      oldGroupId: io.micronaut
+      oldArtifactId: micronaut-parent
+      newGroupId: io.micronaut.platform
+      newVersion: 4.0.0-M2
+      retainVersions:
+        - io.micronaut:micronaut-validation
+        - io.micronaut:micronaut-session
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.micronaut.rewrite.AddSnakeYamlDependencyIfNeeded
+displayName: Add `snakeyaml` dependency if needed
+description: This recipe will add the `snakeyaml` dependency to a Micronaut 4 application that uses yaml configuration.
+applicability:
+  anySource:
+    - io.micronaut.rewrite.FindYamlConfig
+recipeList:
+  - org.openrewrite.gradle.AddDependency:
+      groupId: org.yaml
+      artifactId: snakeyaml
+      configuration: runtimeOnly
+      onlyIfUsing: io.micronaut.runtime.Micronaut
+  - org.openrewrite.maven.AddDependency:
+      groupId: org.yaml
+      artifactId: snakeyaml
+      version: LATEST
+      scope: runtime
+      onlyIfUsing: io.micronaut.runtime.Micronaut
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.micronaut.rewrite.UpdateJakartaAnnotations
+displayName: Update jakarta annotations dependency
+description: This recipe will remove jakarta annotations dependency as it is a transitive dependency of micronaut-inject, and migrate from javax.annotation if needed.
+recipeList:
   - org.openrewrite.java.ChangePackage:
       oldPackageName: javax.annotation
       newPackageName: jakarta.annotation
       recursive: true
   - org.openrewrite.gradle.RemoveGradleDependency:
-      configuration: implementation
       groupId: jakarta.annotation
       artifactId: jakarta.annotation-api
-
-  # Add jakarta validation dependency if needed, migrate from javax.validation if needed, and update micronaut validation dependencies
+  - org.openrewrite.maven.RemoveDependency:
+      groupId: jakarta.annotation
+      artifactId: jakarta.annotation-api
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.micronaut.rewrite.UpdateJakartaPersistence
+displayName: Update jakarta persistence
+description: This recipe will migrate from javax.persistence annotations if needed.
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.persistence
+      newPackageName: jakarta.persistence
+      recursive: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.micronaut.rewrite.UpdateMicronautValidation
+displayName: Update to Micronaut Validation 4.x
+description: This recipe will add jakarta validation dependency if needed, migrate from javax.validation if needed, and update micronaut validation dependencies.
+recipeList:
   - org.openrewrite.java.ChangePackage:
       oldPackageName: javax.validation
       newPackageName: jakarta.validation
       recursive: true
-  - org.openrewrite.gradle.AddDependency:
-      groupId: jakarta.validation
-      artifactId: jakarta.validation-api
-      onlyIfUsing: jakarta.validation..*
-      configuration: implementation
   - org.openrewrite.gradle.ChangeDependencyGroupId:
       groupId: io.micronaut
       artifactId: micronaut-validation
@@ -109,11 +153,82 @@ recipeList:
       configuration: implementation
   - org.openrewrite.gradle.ChangeDependencyGroupId:
       groupId: io.micronaut
-      artifactId: micronaut-validation
+      artifactId: micronaut-http-validation
       newGroupId: io.micronaut.validation
       configuration: annotationProcessor
   - org.openrewrite.gradle.ChangeDependencyArtifactId:
-      groupId: io.micronaut
-      artifactId: micronaut-validation
+      groupId: io.micronaut.validation
+      artifactId: micronaut-http-validation
       newArtifactId: micronaut-validation-processor
       configuration: annotationProcessor
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: io.micronaut
+      oldArtifactId: micronaut-validation
+      newGroupId: io.micronaut.validation
+      newVersion: LATEST
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.micronaut.rewrite.UpdateMicronautEmail
+displayName: Update to Micronaut Validation 4.x
+description: This recipe will migrate from javax.validation if needed, and update packages in for the Postmark integration if needed.
+recipeList:
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: javax.mail
+      newPackageName: jakarta.mail
+      recursive: true
+  - org.openrewrite.java.ChangePackage:
+      oldPackageName: com.wildbit.java
+      newPackageName: com.postmarkapp
+      recursive: true
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.micronaut.rewrite.UpdateMicronautWebsocket
+displayName: Update the Micronaut Websocket support
+description: This recipe will add the explicit Micronaut Websocket dependency if needed
+recipeList:
+  - org.openrewrite.gradle.AddDependency:
+      groupId: io.micronaut
+      artifactId: micronaut-websocket
+      configuration: implementation
+      onlyIfUsing: io.micronaut.websocket..*
+  - org.openrewrite.maven.AddDependency:
+      groupId: io.micronaut
+      artifactId: micronaut-websocket
+      version: LATEST
+      scope: compile
+      onlyIfUsing: io.micronaut.websocket..*
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.micronaut.rewrite.UpdateMicronautSession
+displayName: Update the Micronaut Session support
+description: This recipe will update the Micronaut Session dependency if needed
+recipeList:
+  - org.openrewrite.gradle.ChangeDependencyGroupId:
+      groupId: io.micronaut
+      artifactId: micronaut-session
+      newGroupId: io.micronaut.session
+      configuration: implementation
+  - org.openrewrite.maven.ChangeDependencyGroupIdAndArtifactId:
+      oldGroupId: io.micronaut
+      oldArtifactId: micronaut-session
+      newGroupId: io.micronaut.session
+      newVersion: LATEST
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.micronaut.rewrite.Micronaut3to4Migration
+displayName: Migrate from Micronaut 3.x to 4.x
+description: This recipe will apply changes required for migrating from Micronaut 3 to Micronaut 4.
+recipeList:
+  - io.micronaut.rewrite.UpdateBuildToJava17
+  - org.openrewrite.gradle.UpdateGradleWrapper:
+      version: 8.x
+  - io.micronaut.rewrite.UpdateBuildToMicronaut4Version
+  - io.micronaut.rewrite.UpdateMicronautPlatformBom
+  - io.micronaut.rewrite.UpdateBuildPlugins
+  - io.micronaut.rewrite.AddSnakeYamlDependencyIfNeeded
+  - io.micronaut.rewrite.UpdateJakartaAnnotations
+  - io.micronaut.rewrite.UpdateJakartaPersistence
+  - io.micronaut.rewrite.UpdateMicronautValidation
+  - io.micronaut.rewrite.UpdateMicronautEmail
+  - io.micronaut.rewrite.UpdateMicronautWebsocket
+  - io.micronaut.rewrite.UpdateMicronautSession
