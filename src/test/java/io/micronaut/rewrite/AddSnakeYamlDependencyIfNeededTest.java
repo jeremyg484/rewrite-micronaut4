@@ -9,6 +9,7 @@ import org.openrewrite.test.RewriteTest;
 import static org.openrewrite.gradle.Assertions.buildGradle;
 import static org.openrewrite.java.Assertions.*;
 import static org.openrewrite.maven.Assertions.pomXml;
+import static org.openrewrite.properties.Assertions.properties;
 import static org.openrewrite.yaml.Assertions.yaml;
 
 public class AddSnakeYamlDependencyIfNeededTest implements RewriteTest {
@@ -36,6 +37,11 @@ public class AddSnakeYamlDependencyIfNeededTest implements RewriteTest {
         micronaut:
             application:
                 name: testApp
+        """;
+
+    @Language("properties")
+    private final String micronautPropertiesConfig = """
+            micronaut.application.name=testApp
         """;
 
     @Language("groovy")
@@ -126,6 +132,22 @@ public class AddSnakeYamlDependencyIfNeededTest implements RewriteTest {
         rewriteRun(mavenProject("project",
                 srcMainJava(java(micronautApplication)),
                 srcMainResources(yaml(micronautConfig, s -> s.path("foo.yml"))),
+                pomXml(initialPom)));
+    }
+
+    @Test
+    void testNoGradleDependencyForApplicationProperties() {
+        rewriteRun(mavenProject("project",
+                srcMainJava(java(micronautApplication)),
+                srcMainResources(properties(micronautPropertiesConfig, s -> s.path("application.properties"))),
+                buildGradle("")));
+    }
+
+    @Test
+    void testNoMavenDependencyForApplicationProperties() {
+        rewriteRun(mavenProject("project",
+                srcMainJava(java(micronautApplication)),
+                srcMainResources(properties(micronautPropertiesConfig, s -> s.path("application.properties"))),
                 pomXml(initialPom)));
     }
 

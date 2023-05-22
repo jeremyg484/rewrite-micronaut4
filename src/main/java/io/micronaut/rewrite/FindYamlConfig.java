@@ -11,13 +11,6 @@ public class FindYamlConfig extends Recipe {
 
     @Override
     protected TreeVisitor<?, ExecutionContext> getVisitor() {
-        return Applicability.or(new HasSourcePath<>("**/application.yml"),
-                new HasSourcePath<>("**/application.yaml"),
-                new HasSourcePath<>("**/application-*.yml"),
-                new HasSourcePath<>("**/application-*.yaml"),
-                new HasSourcePath<>("**/bootstrap.yml"),
-                new HasSourcePath<>("**/bootstrap.yaml"),
-                new HasSourcePath<>("**/bootstrap-*.yml"),
-                new HasSourcePath<>("**/bootstrap-*.yaml"));
+        return new HasSourcePath<>("**/{application,application-*,bootstrap,bootstrap-*}.{yml,yaml}");
     }
 }
