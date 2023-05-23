@@ -7,7 +7,7 @@ import org.openrewrite.test.RecipeSpec;
 import org.openrewrite.test.RewriteTest;
 
 import static org.openrewrite.gradle.Assertions.buildGradle;
-import static org.openrewrite.java.Assertions.mavenProject;
+import static org.openrewrite.gradle.Assertions.withToolingApi;
 import static org.openrewrite.java.Assertions.*;
 import static org.openrewrite.maven.Assertions.pomXml;
 
@@ -16,7 +16,7 @@ public class UpdateJakartaAnnotationsTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion().classpath("jakarta.inject-api", "jakarta.annotation-api", "javax.annotation-api"));
-        spec.recipeFromResource("/META-INF/rewrite/micronaut3-to-4.yml", "io.micronaut.rewrite.UpdateJakartaAnnotations");
+        spec.beforeRecipe(withToolingApi()).recipeFromResource("/META-INF/rewrite/micronaut3-to-4.yml", "io.micronaut.rewrite.UpdateJakartaAnnotations");
     }
 
     @Language("java")
@@ -51,17 +51,37 @@ public class UpdateJakartaAnnotationsTest implements RewriteTest {
 
     @Language("groovy")
     private final String buildGradleWithDependency = """
+            plugins {
+                id("io.micronaut.application") version "4.0.0-M2"
+            }
+            
+            micronaut { version '4.0.0-M2'}
+            
+            repositories {
+                mavenCentral()
+            }
+            
             dependencies {
                 annotationProcessor("io.micronaut:micronaut-http-validation")
                 implementation("io.micronaut:micronaut-http-client")
                 implementation("io.micronaut:micronaut-jackson-databind")
-                implementation("jakarta.annotation:jakarta.annotation-api")
+                implementation "jakarta.annotation:jakarta.annotation-api:2.1.1"
                 runtimeOnly("ch.qos.logback:logback-classic")
             }
         """;
 
     @Language("groovy")
     private final String buildGradleWithoutDependency = """
+            plugins {
+                id("io.micronaut.application") version "4.0.0-M2"
+            }
+            
+            micronaut { version '4.0.0-M2'}
+            
+            repositories {
+                mavenCentral()
+            }
+            
             dependencies {
                 annotationProcessor("io.micronaut:micronaut-http-validation")
                 implementation("io.micronaut:micronaut-http-client")
@@ -151,6 +171,7 @@ public class UpdateJakartaAnnotationsTest implements RewriteTest {
     void updateJavaCodeAndRemoveGradleDependency() {
         rewriteRun(mavenProject("project", srcMainJava(java(annotatedJavaxClass, annotatedJakartaClass)),
                 buildGradle(buildGradleWithDependency, buildGradleWithoutDependency)));
+
     }
 
     @Test

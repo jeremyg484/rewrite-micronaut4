@@ -88,6 +88,7 @@ dependencies {
 
     testImplementation("org.openrewrite:rewrite-test")
     testImplementation("org.assertj:assertj-core:latest.release")
+    testRuntimeOnly(gradleApi())
 }
 
 tasks.named<Test>("test") {
@@ -100,7 +101,7 @@ tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs.add("-parameters")
 }
 tasks.named<JavaCompile>("compileJava") {
-    options.release.set(8)
+    options.release.set(17)
 }
 
 configure<ContactsExtension> {

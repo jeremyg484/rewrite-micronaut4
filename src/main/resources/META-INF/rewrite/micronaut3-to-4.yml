@@ -140,7 +140,7 @@ recipeList:
       oldPackageName: javax.annotation
       newPackageName: jakarta.annotation
       recursive: true
-  - org.openrewrite.gradle.RemoveGradleDependency:
+  - org.openrewrite.gradle.RemoveDependency:
       groupId: jakarta.annotation
       artifactId: jakarta.annotation-api
   - org.openrewrite.maven.RemoveDependency:
@@ -355,11 +355,83 @@ recipeList:
   - org.openrewrite.java.ChangeType:
       oldFullyQualifiedTypeName: io.micronaut.security.annotation.RolesAllowedAnnotationMapper
       newFullyQualifiedTypeName: io.micronaut.security.annotation.JakartaRolesAllowedAnnotationMapper
-  - org.openrewrite.java.ChangeType:
-      oldFullyQualifiedTypeName:
-      newFullyQualifiedTypeName:
-
-
+  - io.micronaut.rewrite.UpdateSecurityYamlIfNeeded
+  - io.micronaut.rewrite.UpdateSecurityPropertiesIfNeeded
+  - io.micronaut.rewrite.UpdateSecurityYamlIfNeeded
+---
+type: specs.openrewrite.org/v1beta/recipe
+name: io.micronaut.rewrite.UpdateSecurityPropertiesIfNeeded
+displayName: Update relocated Micronaut Security config properties
+description: This recipe will update relocated security config keys in Micronaut configuration property files.
+applicability:
+  singleSource:
+    - io.micronaut.rewrite.FindPropertiesConfig
+recipeList:
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: micronaut.security.token.jwt.generator.access-token.expiration
+      newPropertyKey: micronaut.security.token.generator.access-token.expiration
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: micronaut.security.token.jwt.cookie.enabled
+      newPropertyKey: micronaut.security.token.cookie.enabled
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: micronaut.security.token.jwt.cookie.cookie-max-age
+      newPropertyKey: micronaut.security.token.cookie.cookie-max-age
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: micronaut.security.token.jwt.cookie.cookie-path
+      newPropertyKey: micronaut.security.token.cookie.cookie-path
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: micronaut.security.token.jwt.cookie.cookie-domain
+      newPropertyKey: micronaut.security.token.cookie.cookie-domain
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: micronaut.security.token.jwt.cookie.cookie-same-site
+      newPropertyKey: micronaut.security.token.cookie.cookie-same-site
+  - org.openrewrite.properties.ChangePropertyKey:
+      oldPropertyKey: micronaut.security.token.jwt.bearer.enabled
+      newPropertyKey: micronaut.security.token.bearer.enabled
+#---
+#type: specs.openrewrite.org/v1beta/recipe
+#name: io.micronaut.rewrite.UpdateSecurityYamlIfNeeded
+#displayName: Update relocated Micronaut Security config yaml keys
+#description: This recipe will update relocated security config keys in Micronaut configuration yaml files.
+#applicability:
+#  singleSource:
+#    - io.micronaut.rewrite.FindYamlConfig
+#recipeList:
+#  - org.openrewrite.yaml.MergeYaml:
+#      key: $.micronaut.security.token
+#      yaml: |-
+#            generator:
+#              access-token:
+#                expiration:
+#            cookie:
+#              enabled:
+#              cookie-max-age:
+#              cookie-path:
+#              cookie-domain:
+#              cookie-same-site:
+#            bearer:
+#              enabled:
+#  - org.openrewrite.yaml.CopyValue:
+#      oldKeyPath: $.micronaut.security.token.jwt.generator.access-token.expiration
+#      newKey: $.micronaut.security.token.generator.access-token.expiration
+#  - org.openrewrite.yaml.CopyValue:
+#      oldKeyPath: $.micronaut.security.token.jwt.cookie.enabled
+#      newKey: $.micronaut.security.token.cookie.enabled
+#  - org.openrewrite.yaml.CopyValue:
+#      oldKeyPath: $.micronaut.security.token.jwt.cookie.cookie-max-age
+#      newKey: $.micronaut.security.token.cookie.cookie-max-age
+#  - org.openrewrite.yaml.CopyValue:
+#      oldKeyPath: $.micronaut.security.token.jwt.cookie.cookie-path
+#      newKey: $.micronaut.security.token.cookie.cookie-path
+#  - org.openrewrite.yaml.CopyValue:
+#      oldKeyPath: $.micronaut.security.token.jwt.cookie.cookie-domain
+#      newKey: $.micronaut.security.token.cookie.cookie-domain
+#  - org.openrewrite.yaml.CopyValue:
+#      oldKeyPath: $.micronaut.security.token.jwt.cookie.cookie-same-site
+#      newKey: $.micronaut.security.token.cookie.cookie-same-site
+#  - org.openrewrite.yaml.CopyValue:
+#      oldKeyPath: $.micronaut.security.token.jwt.bearer.enabled
+#      newKey: $.micronaut.security.token.bearer.enabled
 
 
 
