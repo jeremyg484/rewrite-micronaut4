@@ -186,6 +186,14 @@ recipeList:
       oldArtifactId: micronaut-validation
       newGroupId: io.micronaut.validation
       newVersion: LATEST
+  - io.micronaut.rewrite.ChangeAnnotationProcessorPath:
+      oldGroupId: io.micronaut
+      oldArtifactId: micronaut-http-validation
+      newGroupId: io.micronaut.validation
+      newArtifactId: micronaut-validation-processor
+      newVersion: ${micronaut.validation.version}
+      exclusions:
+        - io.micronaut:micronaut-inject
 ---
 type: specs.openrewrite.org/v1beta/recipe
 name: io.micronaut.rewrite.UpdateMicronautEmail

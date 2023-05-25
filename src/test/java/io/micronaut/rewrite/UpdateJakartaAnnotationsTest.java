@@ -16,7 +16,7 @@ public class UpdateJakartaAnnotationsTest implements RewriteTest {
     @Override
     public void defaults(RecipeSpec spec) {
         spec.parser(JavaParser.fromJavaVersion().classpath("jakarta.inject-api", "jakarta.annotation-api", "javax.annotation-api"));
-        spec.beforeRecipe(withToolingApi()).recipeFromResource("/META-INF/rewrite/micronaut3-to-4.yml", "io.micronaut.rewrite.UpdateJakartaAnnotations");
+        spec.recipeFromResource("/META-INF/rewrite/micronaut3-to-4.yml", "io.micronaut.rewrite.UpdateJakartaAnnotations");
     }
 
     @Language("java")
@@ -169,7 +169,7 @@ public class UpdateJakartaAnnotationsTest implements RewriteTest {
 
     @Test
     void updateJavaCodeAndRemoveGradleDependency() {
-        rewriteRun(mavenProject("project", srcMainJava(java(annotatedJavaxClass, annotatedJakartaClass)),
+        rewriteRun(spec -> spec.beforeRecipe(withToolingApi()), mavenProject("project", srcMainJava(java(annotatedJavaxClass, annotatedJakartaClass)),
                 buildGradle(buildGradleWithDependency, buildGradleWithoutDependency)));
 
     }

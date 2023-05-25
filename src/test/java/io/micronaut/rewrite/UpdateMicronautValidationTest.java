@@ -104,6 +104,31 @@ public class UpdateMicronautValidationTest implements RewriteTest {
                         <scope>runtime</scope>
                     </dependency>
                 </dependencies>
+                <build>
+                    <plugins>
+                        <plugin>
+                            <groupId>io.micronaut.build</groupId>
+                            <artifactId>micronaut-maven-plugin</artifactId>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-compiler-plugin</artifactId>
+                            <configuration>
+                                <annotationProcessorPaths combine.children="append">
+                                    <path>
+                                        <groupId>io.micronaut</groupId>
+                                        <artifactId>micronaut-http-validation</artifactId>
+                                        <version>${micronaut.version}</version>
+                                    </path>
+                                </annotationProcessorPaths>
+                                <compilerArgs>
+                                    <arg>-Amicronaut.processing.group=com.example</arg>
+                                    <arg>-Amicronaut.processing.module=demo</arg>
+                                </compilerArgs>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </build>
             </project>
         """;
 
@@ -145,6 +170,37 @@ public class UpdateMicronautValidationTest implements RewriteTest {
                         <scope>runtime</scope>
                     </dependency>
                 </dependencies>
+                <build>
+                    <plugins>
+                        <plugin>
+                            <groupId>io.micronaut.build</groupId>
+                            <artifactId>micronaut-maven-plugin</artifactId>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-compiler-plugin</artifactId>
+                            <configuration>
+                                <annotationProcessorPaths combine.children="append">
+                                    <path>
+                                        <groupId>io.micronaut.validation</groupId>
+                                        <artifactId>micronaut-validation-processor</artifactId>
+                                        <version>${micronaut.validation.version}</version>
+                                        <exclusions>
+                                            <exclusion>
+                                                <groupId>io.micronaut</groupId>
+                                                <artifactId>micronaut-inject</artifactId>
+                                            </exclusion>
+                                        </exclusions>
+                                    </path>
+                                </annotationProcessorPaths>
+                                <compilerArgs>
+                                    <arg>-Amicronaut.processing.group=com.example</arg>
+                                    <arg>-Amicronaut.processing.module=demo</arg>
+                                </compilerArgs>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </build>
             </project>
         """;
 

@@ -53,11 +53,18 @@ configurations.all {
 //The bom version can also be set to a specific version or latest.release.
 val rewriteBomVersion = "latest.integration"
 
+configurations.all {
+    resolutionStrategy {
+        force("org.openrewrite.gradle.tooling:model:0.8.1")
+    }
+}
+
 dependencies {
     compileOnly("org.projectlombok:lombok:latest.release")
     compileOnly("com.google.code.findbugs:jsr305:latest.release")
     annotationProcessor("org.projectlombok:lombok:latest.release")
     implementation(platform("org.openrewrite.recipe:rewrite-recipe-bom:${rewriteBomVersion}"))
+    implementation("org.openrewrite.gradle.tooling:model:0.8.1")
 
     implementation("org.openrewrite:rewrite-java")
     runtimeOnly("org.openrewrite:rewrite-java-17")
